@@ -19,14 +19,14 @@ class RootActivity : AppCompatActivity(), FragmentNavigator {
 
         setContentView(viewBinding.root)
 
-        navigateTo(NoteListFragment())
+        navigateTo(NoteListFragment::class.java)
     }
 
     override fun navigateTo(
-        fragment: Fragment
+        fragment: Class<out Fragment>, arguments: Bundle?
     ) {
         supportFragmentManager.commit {
-            replace(viewBinding.container.id, fragment)
+            replace(viewBinding.container.id, fragment, arguments)
             addToBackStack(fragment.javaClass.name)
             setReorderingAllowed(true)
         }

@@ -38,7 +38,7 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
         )
         viewBinding.createNoteButton.setOnClickListener {
             findImplementationOrThrow<FragmentNavigator>()
-                .navigateTo(NoteDetailsFragment())
+                .navigateTo(NoteDetailsFragment::class.java)
         }
 
         viewModel.notes.observe(viewLifecycleOwner) {
