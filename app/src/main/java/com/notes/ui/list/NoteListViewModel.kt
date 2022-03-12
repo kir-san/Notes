@@ -16,9 +16,6 @@ class NoteListViewModel @Inject constructor(
     private val _notes = MutableLiveData<List<NoteListItem>?>()
     val notes: LiveData<List<NoteListItem>?> = _notes
 
-    private val _navigateToNoteCreation = MutableLiveData<Unit?>()
-    val navigateToNoteCreation: LiveData<Unit?> = _navigateToNoteCreation
-
     init {
         viewModelScope.launch(Dispatchers.IO) {
             _notes.postValue(
@@ -32,11 +29,6 @@ class NoteListViewModel @Inject constructor(
             )
         }
     }
-
-    fun onCreateNoteClick() {
-        _navigateToNoteCreation.postValue(Unit)
-    }
-
 }
 
 data class NoteListItem(

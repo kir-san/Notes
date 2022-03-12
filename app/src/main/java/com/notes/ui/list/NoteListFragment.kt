@@ -36,27 +36,17 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
             )
         )
         viewBinding.createNoteButton.setOnClickListener {
-            viewModel.onCreateNoteClick()
+            findImplementationOrThrow<FragmentNavigator>()
+                .navigateTo(NoteDetailsFragment())
         }
 
         viewModel.notes.observe(
-            viewLifecycleOwner,
-            {
-                if (it != null) {
-                    recyclerViewAdapter.setItems(it)
-                }
+            viewLifecycleOwner
+        ) {
+            if (it != null) {
+                recyclerViewAdapter.setItems(it)
             }
-        )
-        viewModel.navigateToNoteCreation.observe(
-            viewLifecycleOwner,
-            {
-                findImplementationOrThrow<FragmentNavigator>()
-                    .navigateTo(
-                        NoteDetailsFragment()
-                    )
-
-            }
-        )
+        }
     }
 
     private class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
