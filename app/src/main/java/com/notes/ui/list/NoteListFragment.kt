@@ -1,10 +1,14 @@
 package com.notes.ui.list
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.notes.databinding.FragmentNoteListBinding
@@ -21,7 +25,11 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
 
     private val viewModel: NoteListViewModel by viewModels { DependencyManager.noteViewModelFactory() }
 
-    private val recyclerViewAdapter = RecyclerViewAdapter()
+    private val recyclerViewAdapter = RecyclerViewAdapter { itemId ->
+        val arguments = bundleOf(NoteDetailsFragment.KEY to itemId)
+        findImplementationOrThrow<FragmentNavigator>()
+            .navigateTo(NoteDetailsFragment::class.java, arguments)
+    }
 
     override fun onViewBindingCreated(
         viewBinding: FragmentNoteListBinding,
@@ -42,15 +50,17 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
         }
 
         viewModel.notes.observe(viewLifecycleOwner) {
+            Log.v("observe", "$it")
             if (it != null) {
                 recyclerViewAdapter.setItems(it)
             }
         }
     }
 
-    private class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
-
-        private val items = mutableListOf<NoteListItem>()
+    private class RecyclerViewAdapter(
+        private val onItemClick: (Long) -> Unit,
+    ) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
+        private val differ = AsyncListDiffer(this, DiffCallback())
 
         override fun onCreateViewHolder(
             parent: ViewGroup,
@@ -60,28 +70,28 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            )
+            ),
+            onItemClick
         )
 
         override fun onBindViewHolder(
             holder: ViewHolder,
             position: Int
         ) {
-            holder.bind(items[position])
+            holder.bind( differ.currentList[position])
         }
 
-        override fun getItemCount() = items.size
+        override fun getItemCount() = differ.currentList.count()
 
         fun setItems(
             items: List<NoteListItem>
         ) {
-            this.items.clear()
-            this.items.addAll(items)
-            notifyDataSetChanged()
+            differ.submitList(items)
         }
 
         private class ViewHolder(
-            private val binding: ListItemNoteBinding
+            private val binding: ListItemNoteBinding,
+            private val onItemClick: (Long) -> Unit,
         ) : RecyclerView.ViewHolder(
             binding.root
         ) {
@@ -89,12 +99,27 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
             fun bind(
                 note: NoteListItem
             ) {
+                binding.root.setOnClickListener {
+                    onItemClick(note.id)
+                }
                 binding.titleLabel.text = note.title
                 binding.contentLabel.text = note.content
             }
 
         }
 
+        class DiffCallback : DiffUtil.ItemCallback<NoteListItem>() {
+            override fun areItemsTheSame(oldItem: NoteListItem, newItem: NoteListItem): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: NoteListItem, newItem: NoteListItem): Boolean {
+                return oldItem == newItem
+            }
+        }
+
     }
 
 }
+
+
