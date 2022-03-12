@@ -2,11 +2,11 @@ package com.notes.ui.list
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import com.notes.data.NoteDatabase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.map
 
 class NoteListViewModel @AssistedInject constructor(
     @Assisted savedStateHandle: SavedStateHandle,

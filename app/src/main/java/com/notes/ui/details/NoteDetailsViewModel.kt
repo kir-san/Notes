@@ -42,7 +42,7 @@ class NoteDetailsViewModel @AssistedInject constructor(
                 content = content,
                 modifiedAt = LocalDateTime.now()
             )
-            if (currentNote.id != -1L) {
+            if (currentNote.id > 0) {
                 noteDatabase.noteDao().updateAll(notes)
             } else {
                 noteDatabase.noteDao().insertAll(notes)

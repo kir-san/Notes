@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.os.bundleOf
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -18,12 +18,15 @@ import com.notes.ui._base.FragmentNavigator
 import com.notes.ui._base.ViewBindingFragment
 import com.notes.ui._base.findImplementationOrThrow
 import com.notes.ui.details.NoteDetailsFragment
+import kotlinx.coroutines.flow.collect
 
 class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
     FragmentNoteListBinding::inflate
 ) {
 
-    private val viewModel: NoteListViewModel by viewModels { DependencyManager.noteViewModelFactory() }
+    private val viewModel: NoteListViewModel by lazyViewModel {
+        DependencyManager.noteListViewModel().create(it)
+    }
 
     private val recyclerViewAdapter = RecyclerViewAdapter { itemId ->
         val arguments = bundleOf(NoteDetailsFragment.KEY to itemId)
@@ -49,9 +52,9 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
                 .navigateTo(NoteDetailsFragment::class.java)
         }
 
-        viewModel.notes.observe(viewLifecycleOwner) {
-            Log.v("observe", "$it")
-            if (it != null) {
+        lifecycleScope.launchWhenResumed {
+            viewModel.notes.collect {
+                Log.v("test", "$it")
                 recyclerViewAdapter.setItems(it)
             }
         }
@@ -78,7 +81,7 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
             holder: ViewHolder,
             position: Int
         ) {
-            holder.bind( differ.currentList[position])
+            holder.bind(differ.currentList[position])
         }
 
         override fun getItemCount() = differ.currentList.count()
@@ -114,7 +117,7 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
             }
 
             override fun areContentsTheSame(oldItem: NoteListItem, newItem: NoteListItem): Boolean {
-                return oldItem == newItem
+                return oldItem.title == newItem.title && oldItem.content == newItem.content
             }
         }
 
