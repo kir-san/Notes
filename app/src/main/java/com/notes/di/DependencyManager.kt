@@ -13,14 +13,11 @@ class DependencyManager private constructor(
             instance = DependencyManager(application)
         }
 
-        fun noteListViewModel() = instance.rootComponent.getNoteListViewModel()
-
-        fun noteViewModelFactory() = instance.appComponent.viewModelsFactory()
+        fun noteDetailsViewModel() = instance.appComponent.noteDetailsViewModel()
+        fun noteListViewModel() = instance.appComponent.noteListViewModel()
 
     }
 
     private val appComponent = DaggerAppComponent.factory().create(application)
-
-    private val rootComponent = DaggerRootComponent.factory().create(appComponent)
 
 }

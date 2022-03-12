@@ -1,11 +1,15 @@
 package com.notes.ui.list
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import com.notes.data.NoteDatabase
-import javax.inject.Inject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-class NoteListViewModel @Inject constructor(
+class NoteListViewModel @AssistedInject constructor(
+    @Assisted savedStateHandle: SavedStateHandle,
     noteDatabase: NoteDatabase
 ) : ViewModel() {
     val notes = noteDatabase
@@ -20,6 +24,11 @@ class NoteListViewModel @Inject constructor(
                 )
             }
         }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(savedStateHandle: SavedStateHandle): NoteListViewModel
+    }
 }
 
 data class NoteListItem(

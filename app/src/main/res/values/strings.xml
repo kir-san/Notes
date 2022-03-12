@@ -3,4 +3,7 @@
 
     <string name="create_note">Create Note</string>
     <string name="edit_note">Edit Note</string>
+
+    <string name="title_note">Заголовок</string>
+    <string name="body_note">Заметка</string>
 </resources>

@@ -11,11 +11,11 @@ data class NoteDbo(
     @ColumnInfo(name = "id")
     val id: Long = 0,
     @ColumnInfo(name = "title")
-    val title: String,
+    val title: String = "",
     @ColumnInfo(name = "content")
-    val content: String,
+    val content: String = "",
     @ColumnInfo(name = "createdAt")
-    val createdAt: LocalDateTime,
+    val createdAt: LocalDateTime = LocalDateTime.now(),
     @ColumnInfo(name = "modifiedAt")
-    val modifiedAt: LocalDateTime,
+    val modifiedAt: LocalDateTime = LocalDateTime.now(),
 )
