@@ -1,34 +1,25 @@
 package com.notes.ui.list
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.map
 import com.notes.data.NoteDatabase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NoteListViewModel @Inject constructor(
-    private val noteDatabase: NoteDatabase
+    noteDatabase: NoteDatabase
 ) : ViewModel() {
-
-    private val _notes = MutableLiveData<List<NoteListItem>?>()
-    val notes: LiveData<List<NoteListItem>?> = _notes
-
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            _notes.postValue(
-                noteDatabase.noteDao().getAll().map {
-                    NoteListItem(
-                        id = it.id,
-                        title = it.title,
-                        content = it.content,
-                    )
-                }
-            )
+    val notes = noteDatabase
+        .noteDao()
+        .getAll()
+        .map { items ->
+            items.map { item ->
+                NoteListItem(
+                    id = item.id,
+                    title = item.title,
+                    content = item.content,
+                )
+            }
         }
-    }
 }
 
 data class NoteListItem(

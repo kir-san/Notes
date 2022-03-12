@@ -15,6 +15,8 @@ class DependencyManager private constructor(
 
         fun noteListViewModel() = instance.rootComponent.getNoteListViewModel()
 
+        fun noteViewModelFactory() = instance.appComponent.viewModelsFactory()
+
     }
 
     private val appComponent = DaggerAppComponent.factory().create(application)

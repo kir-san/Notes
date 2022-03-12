@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.notes.databinding.FragmentNoteListBinding
@@ -18,7 +19,7 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
     FragmentNoteListBinding::inflate
 ) {
 
-    private val viewModel by lazy { DependencyManager.noteListViewModel() }
+    private val viewModel: NoteListViewModel by viewModels { DependencyManager.noteViewModelFactory() }
 
     private val recyclerViewAdapter = RecyclerViewAdapter()
 
@@ -40,9 +41,7 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
                 .navigateTo(NoteDetailsFragment())
         }
 
-        viewModel.notes.observe(
-            viewLifecycleOwner
-        ) {
+        viewModel.notes.observe(viewLifecycleOwner) {
             if (it != null) {
                 recyclerViewAdapter.setItems(it)
             }

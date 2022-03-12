@@ -4,7 +4,12 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.notes.data.NoteDatabase
-import dagger.*
+import com.notes.ui.list.ViewModelFactory
+import dagger.Binds
+import dagger.BindsInstance
+import dagger.Component
+import dagger.Module
+import dagger.Provides
 import javax.inject.Singleton
 
 @Singleton
@@ -23,6 +28,8 @@ interface AppComponent {
     }
 
     fun getNoteDatabase(): NoteDatabase
+
+    fun viewModelsFactory(): ViewModelFactory
 
 }
 
