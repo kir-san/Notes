@@ -19,7 +19,8 @@ class RootActivity : AppCompatActivity(), FragmentNavigator {
 
         setContentView(viewBinding.root)
 
-        navigateTo(NoteListFragment::class.java)
+        if (savedInstanceState == null)
+            navigateTo(NoteListFragment::class.java)
     }
 
     override fun navigateTo(
